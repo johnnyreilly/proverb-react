@@ -3,7 +3,7 @@
 var path = require('path');
 var webpack = require('webpack');
 
-var webpackConfig = require('./webpack.config.js');
+var webpackConfig = require('./webpack.config.base.js');
 
 module.exports = function(config) {
   // Documentation: https://karma-runner.github.io/0.13/config/configuration-file.html
@@ -11,7 +11,7 @@ module.exports = function(config) {
     browsers: [ 'PhantomJS' ],
 
     files: [
-      // This ensures we have the es6 shims in place from babel and that angular and angular-mocks are loaded
+      // This ensures we have the es6 shims in place from babel
       // and then loads all the tests
       'test/main.js'
     ],

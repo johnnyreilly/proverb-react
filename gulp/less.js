@@ -15,7 +15,7 @@ var dest = './dist/styles';
 function compile(options) {
   function run(done) {
     return gulp.src(src)
-      .on('end', function() { if (done) { done(); } })
+      .on('end', function() { done(); })
       .pipe(gulpif(options.isDevelopment, sourcemaps.init()))
       .pipe(less({
           paths: [
@@ -36,18 +36,10 @@ function compile(options) {
     gulp.watch(src, function() { run(); });
   }
 
-  return new Promise(function(resolve, reject) {
-    run(function(err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve('less');
-      }
-    });
-  });
+  run(options.done);
 }
 
 module.exports = {
-  build: function() { return compile({ isDevelopment: false, shouldWatch: false }); },
-  watch: function() { return compile({ isDevelopment: true,  shouldWatch: true });  }
+  build: function(done) { return compile({ isDevelopment: false, shouldWatch: false, done: done }); },
+  watch: function(done) { return compile({ isDevelopment: true,  shouldWatch: true,  done: done }); }
 };

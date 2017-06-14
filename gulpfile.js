@@ -13,70 +13,41 @@ var tests = require('./gulp/tests');
 var clean = require('./gulp/clean');
 var inject = require('./gulp/inject');
 
-var eslintSrcs = ['./gulp/**/*.js'];
-var tslintSrcs = ['./src/**/*.ts', './test/**/*.ts', '!**/*.d.ts'];
+var eslintSrcs = ['./webpack.config.*.js', './gulp/**/*.js'];
 
-gulp.task('delete-dist-contents', function (done) {
-    clean.run(done);
+gulp.task('delete-dist', function (done) {
+  clean.run(done);
 });
 
-gulp.task('build-process.env.NODE_ENV', function () {
-    process.env.NODE_ENV = 'production';
+gulp.task('build-css', ['delete-dist'], function(done) {
+  less.build(done);
 });
 
-gulp.task('build-less', ['delete-dist-contents', 'build-process.env.NODE_ENV'], function(done) {
-  less.build().then(function() { done(); });
+gulp.task('build-js', ['delete-dist'], function(done) {
+  webpack.build(done);
 });
 
-gulp.task('build-js', ['delete-dist-contents', 'build-process.env.NODE_ENV'], function (done) {
-    webpack.build().then(function () { done(); });
+gulp.task('build-other', ['delete-dist'], function() {
+  staticFiles.build();
 });
 
-gulp.task('build-other', ['delete-dist-contents', 'build-process.env.NODE_ENV'], function () {
-    staticFiles.build();
+gulp.task('build', ['build-js', 'build-css', 'build-other'], function () {
+  inject.build();
 });
 
-gulp.task('run-tests', [], function (done) {
-    tests.run(done);
+gulp.task('watch-js', ['delete-dist'], function (done) {
+  webpack.watch(done)
 });
 
-gulp.task('build', ['build-less', 'build-js', 'build-other', 'eslint', 'tslint'], function () {
-    inject.build();
+gulp.task('watch-css', ['delete-dist'], function (done) {
+  less.watch(done)
 });
 
-gulp.task('eslint', function () {
-    return gulp.src(eslintSrcs)
-      .pipe(eslint())
-      .pipe(eslint.format());
-});
-
-gulp.task('tslint', function () {
-    return gulp.src(tslintSrcs)
-      .pipe(tslint({
-          formatter: "verbose"
-      }))
-      .pipe(tslint.report({
-          emitError: false
-      }))
-});
-
-gulp.task('watch', ['delete-dist-contents'], function (done) {
-    process.env.NODE_ENV = 'development';
-    Promise.all([
-      webpack.watch(),
-      less.watch()
-    ]).then(function () {
-        gutil.log('Now that initial assets (js and css) are generated injection starts...');
-        inject.watch();
-        done();
-    }).catch(function (error) {
-        gutil.log('Problem generating initial assets (js and css)', error);
-    });
-
-    gulp.watch(eslintSrcs, ['eslint']);
-    gulp.watch(tslintSrcs, ['tslint']);
-    staticFiles.watch();
-    tests.watch();
+gulp.task('watch', ['watch-js', 'watch-css'], function() {
+  inject.watch();
+  gulp.watch(eslintSrcs, ['eslint']);
+  staticFiles.watch();
+  tests.watch();
 });
 
 gulp.task('serve', ['watch'], function() {

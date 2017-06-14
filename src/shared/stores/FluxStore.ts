@@ -56,6 +56,7 @@ class FluxStore<TState> {
 
   _onDispatch(_payload: any) {
     if (process.env.NODE_ENV !== "production") {
+      // tslint:disable-next-line:no-console
       console.error(`${this.constructor.name} has not overridden FluxStore.__onDispatch(), which is required`);
     }
   }
