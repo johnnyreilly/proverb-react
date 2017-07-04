@@ -63,9 +63,9 @@ module.exports = {
   plugins: [
     new ForkTsCheckerWebpackPlugin({
       // tslint: true, // tslint.json needs a tidy
-      memoryLimit: 8192,
-      watch: ['./src', './test'], // optional but improves performance (less stat calls)
-      workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE,
+      memoryLimit: 4096,
+      // watch: ['./src', './test'], // optional but improves performance (less stat calls)
+      // workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE,
     })
   ],
   resolve: {
