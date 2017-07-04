@@ -61,7 +61,7 @@ module.exports = {
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin({
-      tslint: true,
+      tslint: false, // tslint.json needs a tidy
       watch: ['./src', './test'] // optional but improves performance (less stat calls)
     })
   ],
