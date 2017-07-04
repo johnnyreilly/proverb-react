@@ -61,11 +61,12 @@ module.exports = {
     }]
   },
   plugins: [
-    new ForkTsCheckerWebpackPlugin()
-    //{
-    //  tslint: true, // tslint.json needs a tidy
-    //  watch: ['./src', './test'] // optional but improves performance (less stat calls)
-    //})
+    new ForkTsCheckerWebpackPlugin({
+      // tslint: true, // tslint.json needs a tidy
+      memoryLimit: 4096,
+      watch: ['./src', './test'], // optional but improves performance (less stat calls)
+      workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE,
+    })
   ],
   resolve: {
     // Add `.ts` and `.tsx` as a resolvable extension.
