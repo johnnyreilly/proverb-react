@@ -45,7 +45,7 @@ module.exports = {
         },
         {
           loader: 'ts-loader',
-          options: { transpileOnly: true }
+//          options: { transpileOnly: true }
         }
       ]
     }, {
@@ -60,10 +60,10 @@ module.exports = {
     }]
   },
   plugins: [
-    new ForkTsCheckerWebpackPlugin({
-      tslint: false, // tslint.json needs a tidy
-      watch: ['./src', './test'] // optional but improves performance (less stat calls)
-    })
+//    new ForkTsCheckerWebpackPlugin({
+//      // tslint: true, // tslint.json needs a tidy
+//      watch: ['./src', './test'] // optional but improves performance (less stat calls)
+//    })
   ],
   resolve: {
     // Add `.ts` and `.tsx` as a resolvable extension.
