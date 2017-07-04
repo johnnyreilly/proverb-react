@@ -23,6 +23,7 @@ var babelOptions = {
 
 module.exports = {
   cache: true,
+  context: __dirname, // to automatically find tsconfig.json
   entry: {
     main: './src/main.tsx',
     vendor: ['babel-polyfill'].concat(vendorDependencies).filter(function (dependency) {
@@ -45,7 +46,7 @@ module.exports = {
         },
         {
           loader: 'ts-loader',
-//          options: { transpileOnly: true }
+          options: { transpileOnly: true }
         }
       ]
     }, {
@@ -60,10 +61,10 @@ module.exports = {
     }]
   },
   plugins: [
-//    new ForkTsCheckerWebpackPlugin({
-//      // tslint: true, // tslint.json needs a tidy
-//      watch: ['./src', './test'] // optional but improves performance (less stat calls)
-//    })
+    new ForkTsCheckerWebpackPlugin({
+      // tslint: true, // tslint.json needs a tidy
+      watch: ['./src', './test'] // optional but improves performance (less stat calls)
+    })
   ],
   resolve: {
     // Add `.ts` and `.tsx` as a resolvable extension.
