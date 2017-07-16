@@ -8,17 +8,29 @@ var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 var packageJson = require('./package.json');
 var vendorDependencies = Object.keys(packageJson['dependencies']);
 
-var babelOptions = {
-  "presets": [
-    "react",
-    [
-      "es2015",
-      {
-        "modules": false
-      }
-    ],
-    "es2016"
-  ]
+var threadLoader = {
+  loader: 'thread-loader',
+  options: {
+    // leave one cpu for the fork-ts-plugin
+    workers: require('os').cpus().length - 1,
+  },
+};
+
+var babelLoader = {
+  loader: 'babel-loader',
+  options: {
+    cacheDirectory: true,
+    presets: [
+      "react",
+      [
+        "es2015",
+        {
+          "modules": false
+        }
+      ],
+      "es2016"
+    ]
+  }
 };
 
 module.exports = {
@@ -27,7 +39,7 @@ module.exports = {
   entry: {
     main: './src/main.tsx',
     vendor: ['babel-polyfill'].concat(vendorDependencies).filter(function (dependency) {
-       return dependency !== 'bootstrap' && dependency !== 'font-awesome';
+      return dependency !== 'bootstrap' && dependency !== 'font-awesome';
     })
   },
   output: {
@@ -40,33 +52,29 @@ module.exports = {
       test: /\.ts(x?)$/,
       exclude: /node_modules/,
       use: [
-        {
-          loader: 'babel-loader',
-          options: babelOptions
-        },
+        { loader: 'cache-loader' },
+        threadLoader,
+        babelLoader,
         {
           loader: 'ts-loader',
-          options: { transpileOnly: true }
+          options: { happyPackMode: true }
         }
       ]
     }, {
       test: /\.js$/,
       exclude: /node_modules/,
       use: [
-        {
-          loader: 'babel-loader',
-          options: babelOptions
-        }
+        { loader: 'cache-loader' },
+        threadLoader,
+        babelLoader
       ]
     }]
   },
   plugins: [
-   new ForkTsCheckerWebpackPlugin({
-     // tslint: true, // tslint.json needs a tidy
-     // memoryLimit: 4096,
-     watch: ['./src', './test'], // optional but improves performance (less stat calls)
-     // workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE,
-   })
+    new ForkTsCheckerWebpackPlugin({
+      // tslint: true, // tslint.json needs a tidy
+      watch: ['./src', './test'] // optional but improves performance (less stat calls)
+    })
   ],
   resolve: {
     // Add `.ts` and `.tsx` as a resolvable extension.
